@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Game of Chance</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            display: inline-block;
+            width: 120px;
+            text-align: right;
+            margin-right: 10px;
+        }
+        input[type=number] {
+            width: 50px;
+        }
+        button {
+            margin-left: 130px;
+        }
+        table {
+            margin-top: 30px;
+            border-collapse: collapse;
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #eee;
+        }
+    </style>
+</head>
+<body>
+    <h1>Snake and Ladders</h1>
+    <p>Enter the number of players and the size of the board:</p>
+    <label for="players">Number of Players:</label>
+    <input type="number" id="players" value="2"><br>
+    <label for="boardSize">Grids:</label>
+    <input type="number" id="boardSize" value="3"><br>
+    <button onclick="startGame()">Start Game</button>
+    <button onclick="rollDice()">Roll Dice</button>
+    <hr>
+    <table id="gameTable">
+        <thead>
+            <tr>
+                <th>Player</th>
+                <th>Position</th>
+                <th>Dice Roll</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</body>
+<script>
+   
+    let players = [];
+    let boardSize;
+    function startGame() {
+
+        let numPlayers = document.getElementById("players").value;
+        boardSize = document.getElementById("boardSize").value;
+        boardSize = boardSize*boardSize;
+        players = [];
+        for (let i = 1; i <= numPlayers; i++) {
+            players.push({
+                name: "Player " + i,
+                position: 0
+            });
+        }
+        let tableBody = document.querySelector("#gameTable tbody");
+        tableBody.innerHTML = "";
+        for (let i = 0; i < players.length; i++) {
+            let row = document.createElement("tr");
+            let nameCell = document.createElement("td");
+            nameCell.textContent = players[i].name;
+            row.appendChild(nameCell);
+            let positionCell = document.createElement("td");
+            positionCell.textContent = players[i].position;
+            row.appendChild(positionCell);
+            let rollCell = document.createElement("td");
+            rollCell.textContent = " ";
+            row.appendChild(rollCell);
+            tableBody.appendChild(row);
+            let resultCell = document.createElement("td");
+            resultCell.textContent = " ";
+            row.appendChild(resultCell);
+            tableBody.appendChild(row);
+        }
+        
+    }
+    function rollDice() {
+    for (let i = 0; i < players.length; i++) {
+        let diceRoll = Math.floor(Math.random() * 6) + 1;
+        players[i].position += diceRoll;
+        if (players[i].position > boardSize) {
+            players[i].position -= diceRoll;
+        }
+        else if(players[i].position > boardSize)
+        {
+            players[i].position = boardSize;
+        }
+        let positionCell = document.querySelector("#gameTable tbody").rows[i].cells[1];
+        positionCell.textContent += " " + players[i].position;
+        let rollCell = document.querySelector("#gameTable tbody").rows[i].cells[2];
+        rollCell.textContent += " " + diceRoll;
+    }
+    checkForWinner();
+}
+function checkForWinner() {
+    for (let i = 0; i < players.length; i++) {
+        if (players[i].position == boardSize) {
+            alert(players[i].name + " has won the game!");
+            let resultCell = document.querySelector("#gameTable tbody").rows[i].cells[3];
+            resultCell.textContent += "Won";
+            for (let j = 0; j < players.length; j++) {
+                if (j != i) {
+                    resultCell = document.querySelector("#gameTable tbody").rows[j].cells[3];
+                    resultCell.textContent += "Lost";
+                }
+            }
+            return;
+        }
+    }
+}
+
+</script>
+</html>
